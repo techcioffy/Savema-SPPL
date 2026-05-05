@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "savema-sppl"
+version = "0.1.0"
+description = "Python client and command builder for Savema Printer Programming Language (SPPL)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+  { name = "Savema SPPL maintainers" }
+]
+keywords = ["savema", "sppl", "printer", "thermal-transfer", "tto"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries",
+]
+dependencies = []
+
+[project.optional-dependencies]
+serial = ["pyserial>=3.5"]
+dev = [
+  "pytest>=8.0",
+  "build>=1.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/techcioffy/Savema-SPPL"
+Repository = "https://github.com/techcioffy/Savema-SPPL"
+Issues = "https://github.com/techcioffy/Savema-SPPL/issues"
+
+[tool.setuptools.packages.find]
+include = ["sppl*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

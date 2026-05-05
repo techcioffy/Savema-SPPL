@@ -1,0 +1,115 @@
+"""Command catalog extracted from the SPPL Rev.11 command table."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Dict, Tuple
+
+
+@dataclass(frozen=True)
+class CommandSpec:
+    code: str
+    group: str
+    name: str
+    params: Tuple[str, ...] = ()
+    separator: str = ">"
+    notes: str = ""
+
+
+COMMAND_SPECS = (
+    CommandSpec("SPCSDT", "configuration", "Set system date/time and offset", ("day", "month", "year", "hour", "minute", "second", "offset")),
+    CommandSpec("SPCGDT", "configuration", "Get system date/time and offset"),
+    CommandSpec("SPCSNC", "configuration", "Set network configuration", ("ip_address", "subnet_mask", "gateway", "port_number")),
+    CommandSpec("SPCGNC", "configuration", "Get network configuration"),
+    CommandSpec("SPCSSC", "configuration", "Set RS-232 configuration", ("baud_rate", "parity", "data_bits", "stop_bits")),
+    CommandSpec("SPCGSC", "configuration", "Get RS-232 configuration"),
+    CommandSpec("SPCSPS", "configuration", "Set print speed", ("print_speed",)),
+    CommandSpec("SPCGPS", "configuration", "Get print speed"),
+    CommandSpec("SPCSPD", "configuration", "Set print delay", ("print_delay",)),
+    CommandSpec("SPCGPD", "configuration", "Get print delay"),
+    CommandSpec("SPCSDV", "configuration", "Set darkness/contrast", ("contrast",)),
+    CommandSpec("SPCGDV", "configuration", "Get darkness/contrast"),
+    CommandSpec("SPCSPR", "configuration", "Set print rotation", ("rotation",)),
+    CommandSpec("SPCGPR", "configuration", "Get print rotation"),
+    CommandSpec("SPCSHP", "configuration", "Set horizontal position", ("position",)),
+    CommandSpec("SPCGHP", "configuration", "Get horizontal position"),
+    CommandSpec("SPCSVP", "configuration", "Set vertical position", ("position",), notes="Manual marks this as future use."),
+    CommandSpec("SPCGVP", "configuration", "Get vertical position", notes="Manual marks this as future use."),
+    CommandSpec("SPCSMO", "configuration", "Set mirroring option", ("option",)),
+    CommandSpec("SPCGMO", "configuration", "Get mirroring option"),
+    CommandSpec("SPCSRS", "configuration", "Set RibbonSave mode", ("direction", "column_no", "shifting_length")),
+    CommandSpec("SPCGRS", "configuration", "Get RibbonSave mode"),
+    CommandSpec("SPCSIC", "configuration", "Set internal contact mode", ("state", "package_length")),
+    CommandSpec("SPCGIC", "configuration", "Get internal contact mode"),
+    CommandSpec("SPCSTC", "configuration", "Set trigger contact mode", ("state", "print_count", "package_length")),
+    CommandSpec("SPCGTC", "configuration", "Get trigger contact mode"),
+    CommandSpec("SPCSAS", "configuration", "Set all settings", ("print_speed", "print_delay", "darkness_value", "ribbonsave_direction", "ribbonsave_column_no", "ribbonsave_package_length", "internal_contact_state", "internal_contact_package_length", "trigger_contact_state", "trigger_contact_print_count", "trigger_contact_package_length")),
+    CommandSpec("SPCGAS", "configuration", "Get all settings"),
+    CommandSpec("SPCSSP", "configuration", "Set system parameter", ("parameter_no", "parameter_value")),
+    CommandSpec("SPCGSP", "configuration", "Get system parameter", ("parameter_no",)),
+    CommandSpec("SPCSPA", "configuration", "Set all system parameters", ("parameters",)),
+    CommandSpec("SPCGPA", "configuration", "Get all system parameters"),
+    CommandSpec("SPCSSL", "configuration", "Set system language", ("language_code",)),
+    CommandSpec("SPCGSL", "configuration", "Get system language"),
+    CommandSpec("SPCSAP", "configuration", "Set administrator password", ("password",)),
+    CommandSpec("SPCGAP", "configuration", "Get administrator password"),
+    CommandSpec("SPCSFS", "configuration", "Return to factory settings"),
+    CommandSpec("SPCSPM", "configuration", "Set print request message", ("active", "message")),
+    CommandSpec("SPCGPM", "configuration", "Get print request message"),
+    CommandSpec("SPLTDS", "label", "Create template data and structure", ("template_data",), separator="raw"),
+    CommandSpec("SPLLTF", "label", "Load template from printer", ("template_file_name",)),
+    CommandSpec("SPLGAT", "label", "Get active template"),
+    CommandSpec("SPLGST", "label", "Get stored templates"),
+    CommandSpec("SPLGSD", "label", "Get stored data files"),
+    CommandSpec("SPLCDF", "label", "Create data file", ("data_file_name", "content"), separator="~gt~"),
+    CommandSpec("SPLDTF", "label", "Delete template file", ("template_file_name",)),
+    CommandSpec("SPLDTA", "label", "Delete all templates"),
+    CommandSpec("SPLDDF", "label", "Delete data file", ("data_file_name",)),
+    CommandSpec("SPLDDA", "label", "Delete all data files"),
+    CommandSpec("SPLCDB", "label", "Clear data buffer"),
+    CommandSpec("SPLGFN", "label", "Get field names", ("template_file_name",)),
+    CommandSpec("SPLGFV", "label", "Get field value", ("field_name",)),
+    CommandSpec("SPLAQD", "label", "Append queue data", ("field_name", "data"), separator="~gt~"),
+    CommandSpec("SPLAMQ", "label", "Append multi queue data", ("field_name", "data"), separator="~gt~"),
+    CommandSpec("SPLGQC", "label", "Get queue capacity", ("field_name",)),
+    CommandSpec("SPLGMQ", "label", "Get multi queue capacity", ("field_name",), separator="~gt~"),
+    CommandSpec("SPLCQD", "label", "Clear queue data", ("field_name",)),
+    CommandSpec("SPLCMQ", "label", "Clear multi queue data", ("field_name",), separator="~gt~"),
+    CommandSpec("SPMCTV", "modification", "Change text value", ("object_name", "text"), separator="~gt~"),
+    CommandSpec("SPMCBV", "modification", "Change barcode value", ("object_name", "barcode"), separator="~gt~"),
+    CommandSpec("SPMC2D", "modification", "Change 2D barcode value", ("object_name", "barcode"), separator="~gt~"),
+    CommandSpec("SPMCCV", "modification", "Change counter value", ("object_name", "counter"), separator="~gt~"),
+    CommandSpec("SPMCLV", "modification", "Change logo value", ("object_name", "base64_data"), separator="~gt~"),
+    CommandSpec("SPMCSV", "modification", "Change selected values", ("object_name", "value"), separator="~gt~"),
+    CommandSpec("SPPSAP", "print", "Start automatic print"),
+    CommandSpec("SPPSLQ", "print", "Set limited print count", ("print_quantity",)),
+    CommandSpec("SPPGLQ", "print", "Get limited print count"),
+    CommandSpec("SPPSTP", "print", "Stop print"),
+    CommandSpec("SPPOTP", "print", "One test print"),
+    CommandSpec("SPPSTA", "print", "Printer status"),
+    CommandSpec("SPGSUM", "general", "Send user message", ("message",)),
+    CommandSpec("SPGRES", "general", "General response from printer", ("response",)),
+    CommandSpec("SPGGTP", "general", "Get total print count"),
+    CommandSpec("SPGGFV", "general", "Get firmware version", notes="The command table also contains the typo SPGGFW."),
+    CommandSpec("SPGGFW", "general", "Get firmware version alternate document code", notes="Kept for the typo in the command table."),
+    CommandSpec("SPGGRR", "general", "Get remaining ribbon"),
+    CommandSpec("SPGGSN", "general", "Get serial number"),
+    CommandSpec("SPGGCP", "general", "Get current print count"),
+    CommandSpec("SPGSLI", "general", "Set lock interface", ("lock",)),
+    CommandSpec("SPGGLI", "general", "Get lock interface"),
+    CommandSpec("SPTSPS", "traverse", "Set pack size", ("pack_size_mm",)),
+    CommandSpec("SPTGPS", "traverse", "Get pack size"),
+    CommandSpec("SPTSPC", "traverse", "Set print count", ("print_count",)),
+    CommandSpec("SPTGPC", "traverse", "Get print count"),
+    CommandSpec("SPTSPP", "traverse", "Set print position", ("print_position_mm",)),
+    CommandSpec("SPTGPP", "traverse", "Get print position"),
+    CommandSpec("SPTSPD", "traverse", "Set pack distance from beginning", ("pack_distance_mm",)),
+    CommandSpec("SPTGPD", "traverse", "Get pack distance from beginning"),
+    CommandSpec("SPTSPA", "traverse", "Set printing area", ("printing_area",)),
+    CommandSpec("SPTGPA", "traverse", "Get printing area"),
+    CommandSpec("SPTSTP", "traverse", "Set all traverse parameters", ("pack_size", "print_count", "print_position", "pack_distance", "printing_area")),
+    CommandSpec("SPTGTP", "traverse", "Get all traverse parameters"),
+)
+
+COMMANDS: Dict[str, CommandSpec] = {spec.code: spec for spec in COMMAND_SPECS}
+
