@@ -54,6 +54,12 @@ def test_configuration_commands_from_manual_examples():
     assert frame(c.return_to_factory_settings()) == "~SPCSFS^"
     assert frame(c.set_print_request_message(0, "OK")) == "~SPCSPM{0>OK}^"
     assert frame(c.get_print_request_message()) == "~SPCGPM^"
+    assert frame(c.set_additional_setting(1, 25)) == "~SPCSOA{1>25}^"
+    assert frame(c.get_additional_setting(1)) == "~SPCGOA{1}^"
+    assert frame(c.set_all_additional_settings(range(1, 21))) == (
+        "~SPCSAA{1>2>3>4>5>6>7>8>9>10>11>12>13>14>15>16>17>18>19>20}^"
+    )
+    assert frame(c.get_all_additional_settings()) == "~SPCGAA^"
 
 
 def test_label_commands_from_manual_examples():
@@ -71,6 +77,9 @@ def test_label_commands_from_manual_examples():
     assert frame(c.delete_data_file("datafile1.csv")) == "~SPLDDF{datafile1.csv}^"
     assert frame(c.delete_all_data_files()) == "~SPLDDA^"
     assert frame(c.clear_data_buffer()) == "~SPLCDB^"
+    assert frame(c.load_font_file("CENTURY.TTF", b"abc")) == "~SPLLFF{CENTURY.TTF>YWJj}^"
+    assert frame(c.get_font_files()) == "~SPLGFF^"
+    assert frame(c.delete_font_file("arial.ttf")) == "~SPLDFF{arial.ttf}^"
     assert frame(c.get_field_names("temp1_53.rox")) == "~SPLGFN{temp1_53.rox}^"
     assert frame(c.get_field_value("BatchNo")) == "~SPLGFV{BatchNo}^"
     assert frame(c.append_queue_data("TextCSV", ["AB001", "AB002"])) == (

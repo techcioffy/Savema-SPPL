@@ -51,12 +51,15 @@ def test_build_getter_steps_contains_all_canonical_getters():
         "~SPCGAS^",
         "~SPCGSP{1}^",
         "~SPCGPA^",
+        "~SPCGOA{1}^",
+        "~SPCGAA^",
         "~SPCGSL^",
         "~SPCGAP^",
         "~SPCGPM^",
         "~SPLGAT^",
         "~SPLGST^",
         "~SPLGSD^",
+        "~SPLGFF^",
         f"~SPLGFN{{{DEFAULT_TEMPLATE_FILE}}}^",
         "~SPLGFV{TextCSV}^",
         "~SPLGQC{TextCSV}^",
@@ -83,6 +86,7 @@ def test_build_getter_steps_uses_args_and_can_include_document_typo_aliases():
         step.frame
         for step in build_getter_steps(
             system_parameter=7,
+            additional_setting=8,
             template_file="label.ronx",
             field_name="BatchNo",
             queue_fields=("PRDNAME", "BATCH NO"),
@@ -91,6 +95,7 @@ def test_build_getter_steps_uses_args_and_can_include_document_typo_aliases():
     ]
 
     assert "~SPCGSP{7}^" in frames
+    assert "~SPCGOA{8}^" in frames
     assert "~SPLGFN{label.ronx}^" in frames
     assert "~SPLGFV{BatchNo}^" in frames
     assert "~SPLGQC{BatchNo}^" in frames
@@ -155,12 +160,15 @@ def test_parser_accepts_printer_ip_and_getter_parameters():
             "BATCH NO",
             "--system-parameter",
             "7",
+            "--additional-setting",
+            "8",
         ]
     )
 
     assert args.host == "192.168.1.123"
     assert args.queue_fields == ["PRDNAME", "BATCH NO"]
     assert args.system_parameter == 7
+    assert args.additional_setting == 8
 
 
 def test_parser_default_template_file_matches_c998_test_template():
@@ -186,5 +194,5 @@ def test_main_builds_tcp_client(monkeypatch):
     assert main(["--host", "192.168.1.123"]) == 0
     assert captured["host"] == "192.168.1.123"
     assert captured["client"] == "client"
-    assert captured["count"] == 40
+    assert captured["count"] == 43
     assert captured["continue_on_error"] is True

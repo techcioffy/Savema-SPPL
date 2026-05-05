@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 from collections.abc import Mapping, Sequence
 from typing import Any, Iterable, Tuple, Union
 
@@ -11,6 +12,7 @@ from .template import Template
 
 DataLines = Union[str, Iterable[Any]]
 PairInput = Union[Mapping[str, Any], Iterable[Tuple[str, Any]]]
+FontContent = Union[str, bytes, bytearray, memoryview]
 
 
 def _lines(data: DataLines) -> str:
@@ -25,6 +27,17 @@ def _pairs(items: PairInput) -> Tuple[Any, ...]:
     for key, value in source:
         values.extend([key, _lines(value)])
     return tuple(values)
+
+
+def _base64_content(content: FontContent) -> str:
+    if isinstance(content, str):
+        return content
+    return base64.b64encode(bytes(content)).decode("ascii")
+
+
+def _require_count(values: Sequence[Any], count: int, label: str) -> None:
+    if len(values) != count:
+        raise ValueError(f"{label} requires exactly {count} values, got {len(values)}")
 
 
 class SPPLCommands:
@@ -194,6 +207,23 @@ class SPPLCommands:
     def get_print_request_message(self) -> SPPLCommand:
         return self.command("SPCGPM")
 
+    def set_additional_setting(self, parameter_no: int, parameter_value: Any) -> SPPLCommand:
+        return self.command("SPCSOA", parameter_no, parameter_value)
+
+    set_one_additional_setting = set_additional_setting
+
+    def get_additional_setting(self, parameter_no: int) -> SPPLCommand:
+        return self.command("SPCGOA", parameter_no)
+
+    get_one_additional_setting = get_additional_setting
+
+    def set_all_additional_settings(self, parameters: Sequence[Any]) -> SPPLCommand:
+        _require_count(parameters, 20, "set_all_additional_settings")
+        return self.command("SPCSAA", *parameters)
+
+    def get_all_additional_settings(self) -> SPPLCommand:
+        return self.command("SPCGAA")
+
     # Label designing commands
     def create_template_data(self, template_data: Union[str, Template]) -> SPPLCommand:
         raw = template_data.to_xml() if isinstance(template_data, Template) else str(template_data)
@@ -228,6 +258,15 @@ class SPPLCommands:
 
     def clear_data_buffer(self) -> SPPLCommand:
         return self.command("SPLCDB")
+
+    def load_font_file(self, font_file_name: str, file_content: FontContent) -> SPPLCommand:
+        return self.command("SPLLFF", font_file_name, _base64_content(file_content))
+
+    def get_font_files(self) -> SPPLCommand:
+        return self.command("SPLGFF")
+
+    def delete_font_file(self, font_file_name: str) -> SPPLCommand:
+        return self.command("SPLDFF", font_file_name)
 
     def get_field_names(self, template_file_name: str) -> SPPLCommand:
         return self.command("SPLGFN", template_file_name)

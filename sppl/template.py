@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Iterable, List, Mapping, Optional, Sequence
+from datetime import date, datetime
+from pathlib import Path
+from typing import Any, List, Mapping, Optional, Sequence, Union
 from xml.etree import ElementTree as ET
 
 
@@ -30,6 +32,112 @@ def _indent(element: ET.Element, level: int = 0) -> None:
             children[-1].tail = pad
     if level and (not element.tail or not element.tail.strip()):
         element.tail = pad
+
+
+def _find_child(parent: ET.Element, name: str) -> Optional[ET.Element]:
+    for child in parent:
+        if child.tag == name:
+            return child
+    return None
+
+
+def _ensure_child(parent: ET.Element, name: str) -> ET.Element:
+    child = _find_child(parent, name)
+    if child is None:
+        child = ET.SubElement(parent, name)
+    return child
+
+
+def _child_text(parent: ET.Element, name: str) -> str:
+    child = _find_child(parent, name)
+    return "" if child is None or child.text is None else child.text
+
+
+def _set_child_text(parent: ET.Element, name: str, value: Any) -> None:
+    _ensure_child(parent, name).text = _text(value)
+
+
+def _format_date(value: Union[str, date, datetime], date_format: str) -> str:
+    if isinstance(value, str):
+        return value
+    tokens = (
+        ("yyyy", "%Y"),
+        ("yy", "%y"),
+        ("MMMM", "%B"),
+        ("MMM", "%b"),
+        ("MM", "%m"),
+        ("dddd", "%A"),
+        ("ddd", "%a"),
+        ("dd", "%d"),
+    )
+    python_format = date_format
+    for sppl_token, python_token in tokens:
+        python_format = python_format.replace(sppl_token, python_token)
+    if "%" not in python_format:
+        raise ValueError(f"Unsupported SPPL date format for Python date value: {date_format!r}")
+    return value.strftime(python_format)
+
+
+def set_date_object_value(
+    template_data: str,
+    object_name: str,
+    value: Union[str, date, datetime],
+    *,
+    date_format: Optional[str] = None,
+    separator: Optional[str] = None,
+    source: Optional[str] = "Fixed",
+    date_type: Optional[str] = "Fixed",
+    pretty: bool = False,
+) -> str:
+    """Return template XML with a Date object's Data value changed.
+
+    SPPL Rev.11 does not define a modification command for Date objects. Keeping
+    the object type as Date requires updating the template XML and sending it via
+    ``SPLTDS``.
+    """
+
+    root = ET.fromstring(template_data)
+    target: Optional[ET.Element] = None
+    for item in root.findall("Object"):
+        if _child_text(item, "ObjectType").strip().lower() != "date":
+            continue
+        names = {_child_text(item, "Name").strip(), _child_text(item, "NameID").strip()}
+        if object_name in names:
+            target = item
+            break
+
+    if target is None:
+        raise ValueError(f"Date object {object_name!r} was not found in template")
+
+    content = _ensure_child(target, "Content")
+    effective_format = date_format or _child_text(content, "Format") or "dd/MM/yyyy"
+    effective_separator = separator if separator is not None else _child_text(content, "Separator")
+    formatted_value = _format_date(value, effective_format)
+
+    _set_child_text(content, "Data", formatted_value)
+    if date_format is not None:
+        _set_child_text(content, "Format", date_format)
+    if separator is not None:
+        _set_child_text(content, "Separator", separator)
+    elif not effective_separator:
+        _set_child_text(content, "Separator", "/")
+    if source is not None:
+        _set_child_text(content, "Source", source)
+    if date_type is not None:
+        _set_child_text(content, "Type", date_type)
+
+    if pretty:
+        _indent(root)
+    return ET.tostring(root, encoding="unicode", short_empty_elements=False)
+
+
+def set_date_object_value_from_file(
+    path: Union[str, Path],
+    object_name: str,
+    value: Union[str, date, datetime],
+    **kwargs: Any,
+) -> str:
+    return set_date_object_value(Path(path).read_text(encoding="utf-8"), object_name, value, **kwargs)
 
 
 @dataclass
