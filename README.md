@@ -89,7 +89,7 @@ Some getters require a template, field, queue field, or system parameter number.
 Defaults are provided, but you can override them:
 
 ```powershell
-python main.py --host 192.168.1.123 --template-file temp1_53.ronx --field-name TextCSV --queue-field PRDNAME --queue-field "BATCH NO" --system-parameter 1
+python main.py --host 192.168.1.123 --template-file "C998 - TEST2_53.rox" --field-name TextCSV --queue-field PRDNAME --queue-field "BATCH NO" --system-parameter 1
 ```
 
 Known typo aliases from the PDF examples are skipped by default. Include them

@@ -3,6 +3,7 @@ import main as root_main
 
 from sppl import SavemaPrinterClient
 from sppl.getters_main import main as getters_main
+from sppl.getters_main import DEFAULT_TEMPLATE_FILE
 from sppl.getters_main import build_getter_steps, build_parser, main, run_getters
 
 
@@ -56,7 +57,7 @@ def test_build_getter_steps_contains_all_canonical_getters():
         "~SPLGAT^",
         "~SPLGST^",
         "~SPLGSD^",
-        "~SPLGFN{temp1_53.ronx}^",
+        f"~SPLGFN{{{DEFAULT_TEMPLATE_FILE}}}^",
         "~SPLGFV{TextCSV}^",
         "~SPLGQC{TextCSV}^",
         "~SPLGMQ{TextCSV}^",
@@ -160,6 +161,12 @@ def test_parser_accepts_printer_ip_and_getter_parameters():
     assert args.host == "192.168.1.123"
     assert args.queue_fields == ["PRDNAME", "BATCH NO"]
     assert args.system_parameter == 7
+
+
+def test_parser_default_template_file_matches_c998_test_template():
+    args = build_parser().parse_args(["--host", "192.168.1.123"])
+
+    assert args.template_file == "C998 - TEST2_53.rox"
 
 
 def test_main_builds_tcp_client(monkeypatch):
