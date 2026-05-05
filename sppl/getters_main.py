@@ -13,6 +13,10 @@ from .exceptions import SPPLError
 from .protocol import SPPLCommand, SPPLResponse
 
 
+DEFAULT_TEMPLATE_FILE = "C998 - TEST2_53.rox"
+DEFAULT_FIELD_NAME = "TextCSV"
+
+
 @dataclass(frozen=True)
 class GetterStep:
     label: str
@@ -25,9 +29,9 @@ class GetterStep:
 
 def build_getter_steps(
     system_parameter: int = 1,
-    template_file: str = "temp1_53.ronx",
-    field_name: str = "TextCSV",
-    queue_fields: Sequence[str] = ("TextCSV",),
+    template_file: str = DEFAULT_TEMPLATE_FILE,
+    field_name: str = DEFAULT_FIELD_NAME,
+    queue_fields: Sequence[str] = (DEFAULT_FIELD_NAME,),
     include_document_typo_aliases: bool = False,
 ) -> List[GetterStep]:
     """Build all read-only getter/status commands available in the library."""
@@ -146,20 +150,20 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--template-file",
-        default="temp1_53.ronx",
-        help="Template filename for SPLGFN, default temp1_53.ronx.",
+        default=DEFAULT_TEMPLATE_FILE,
+        help=f"Template filename for SPLGFN, default {DEFAULT_TEMPLATE_FILE}.",
     )
     parser.add_argument(
         "--field-name",
-        default="TextCSV",
-        help="Field name for SPLGFV and SPLGQC, default TextCSV.",
+        default=DEFAULT_FIELD_NAME,
+        help=f"Field name for SPLGFV and SPLGQC, default {DEFAULT_FIELD_NAME}.",
     )
     parser.add_argument(
         "--queue-field",
         action="append",
         dest="queue_fields",
         default=None,
-        help="Field name for SPLGMQ. Repeat for multiple fields. Default TextCSV.",
+        help=f"Field name for SPLGMQ. Repeat for multiple fields. Default {DEFAULT_FIELD_NAME}.",
     )
     parser.add_argument(
         "--include-document-typo-aliases",
@@ -177,7 +181,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
-    queue_fields = tuple(args.queue_fields or ["TextCSV"])
+    queue_fields = tuple(args.queue_fields or [DEFAULT_FIELD_NAME])
     steps = build_getter_steps(
         system_parameter=args.system_parameter,
         template_file=args.template_file,
