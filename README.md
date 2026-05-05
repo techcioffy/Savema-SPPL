@@ -71,6 +71,34 @@ python -m pip install -e .[serial]
 sppl-smoke --serial-port COM3 --baudrate 115200
 ```
 
+## All getters on a real printer
+
+For a full read-only getter pass against a printer IP:
+
+```powershell
+python main.py --host 192.168.1.123
+```
+
+If installed as a package, the same runner is available as:
+
+```powershell
+sppl-getters --host 192.168.1.123
+```
+
+Some getters require a template, field, queue field, or system parameter number.
+Defaults are provided, but you can override them:
+
+```powershell
+python main.py --host 192.168.1.123 --template-file temp1_53.ronx --field-name TextCSV --queue-field PRDNAME --queue-field "BATCH NO" --system-parameter 1
+```
+
+Known typo aliases from the PDF examples are skipped by default. Include them
+only when you want to verify the controller behavior:
+
+```powershell
+python main.py --host 192.168.1.123 --include-document-typo-aliases
+```
+
 ## Template builder
 
 ```python
