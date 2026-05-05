@@ -29,6 +29,7 @@ class GetterStep:
 
 def build_getter_steps(
     system_parameter: int = 1,
+    additional_setting: int = 1,
     template_file: str = DEFAULT_TEMPLATE_FILE,
     field_name: str = DEFAULT_FIELD_NAME,
     queue_fields: Sequence[str] = (DEFAULT_FIELD_NAME,),
@@ -54,12 +55,15 @@ def build_getter_steps(
         GetterStep("get all settings", c.get_all_settings()),
         GetterStep(f"get system parameter {system_parameter}", c.get_system_parameter(system_parameter)),
         GetterStep("get all system parameters", c.get_all_system_parameters()),
+        GetterStep(f"get additional setting {additional_setting}", c.get_additional_setting(additional_setting)),
+        GetterStep("get all additional settings", c.get_all_additional_settings()),
         GetterStep("get system language", c.get_system_language()),
         GetterStep("get administrator password", c.get_administrator_password()),
         GetterStep("get print request message", c.get_print_request_message()),
         GetterStep("get active template", c.get_active_template()),
         GetterStep("get stored templates", c.get_stored_templates()),
         GetterStep("get stored data files", c.get_stored_data_files()),
+        GetterStep("get font files", c.get_font_files()),
         GetterStep(f"get field names for {template_file}", c.get_field_names(template_file)),
         GetterStep(f"get field value for {field_name}", c.get_field_value(field_name)),
         GetterStep(f"get queue capacity for {field_name}", c.get_queue_capacity(field_name)),
@@ -149,6 +153,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Parameter number for SPCGSP, default 1.",
     )
     parser.add_argument(
+        "--additional-setting",
+        type=int,
+        default=1,
+        help="Additional setting number for SPCGOA, default 1.",
+    )
+    parser.add_argument(
         "--template-file",
         default=DEFAULT_TEMPLATE_FILE,
         help=f"Template filename for SPLGFN, default {DEFAULT_TEMPLATE_FILE}.",
@@ -184,6 +194,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     queue_fields = tuple(args.queue_fields or [DEFAULT_FIELD_NAME])
     steps = build_getter_steps(
         system_parameter=args.system_parameter,
+        additional_setting=args.additional_setting,
         template_file=args.template_file,
         field_name=args.field_name,
         queue_fields=queue_fields,

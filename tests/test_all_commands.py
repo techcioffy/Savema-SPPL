@@ -44,6 +44,10 @@ DOCUMENTED_COMMAND_CODES = {
     "SPCSFS",
     "SPCSPM",
     "SPCGPM",
+    "SPCSOA",
+    "SPCGOA",
+    "SPCSAA",
+    "SPCGAA",
     "SPLTDS",
     "SPLLTF",
     "SPLGAT",
@@ -55,6 +59,9 @@ DOCUMENTED_COMMAND_CODES = {
     "SPLDDF",
     "SPLDDA",
     "SPLCDB",
+    "SPLLFF",
+    "SPLGFF",
+    "SPLDFF",
     "SPLGFN",
     "SPLGFV",
     "SPLAQD",
@@ -141,6 +148,10 @@ COMMAND_CASES = {
     "SPCSFS": (lambda c: c.return_to_factory_settings(), "~SPCSFS^"),
     "SPCSPM": (lambda c: c.set_print_request_message(0, "OK"), "~SPCSPM{0>OK}^"),
     "SPCGPM": (lambda c: c.get_print_request_message(), "~SPCGPM^"),
+    "SPCSOA": (lambda c: c.set_additional_setting(1, 25), "~SPCSOA{1>25}^"),
+    "SPCGOA": (lambda c: c.get_additional_setting(1), "~SPCGOA{1}^"),
+    "SPCSAA": (lambda c: c.set_all_additional_settings(range(1, 21)), "~SPCSAA{1>2>3>4>5>6>7>8>9>10>11>12>13>14>15>16>17>18>19>20}^"),
+    "SPCGAA": (lambda c: c.get_all_additional_settings(), "~SPCGAA^"),
     "SPLTDS": (lambda c: c.create_template_data("<Template></Template>"), "~SPLTDS{<Template></Template>}^"),
     "SPLLTF": (lambda c: c.load_template_file("temp1_53.ronx"), "~SPLLTF{temp1_53.ronx}^"),
     "SPLGAT": (lambda c: c.get_active_template(), "~SPLGAT^"),
@@ -152,6 +163,9 @@ COMMAND_CASES = {
     "SPLDDF": (lambda c: c.delete_data_file("datafile1.csv"), "~SPLDDF{datafile1.csv}^"),
     "SPLDDA": (lambda c: c.delete_all_data_files(), "~SPLDDA^"),
     "SPLCDB": (lambda c: c.clear_data_buffer(), "~SPLCDB^"),
+    "SPLLFF": (lambda c: c.load_font_file("CENTURY.TTF", b"abc"), "~SPLLFF{CENTURY.TTF>YWJj}^"),
+    "SPLGFF": (lambda c: c.get_font_files(), "~SPLGFF^"),
+    "SPLDFF": (lambda c: c.delete_font_file("arial.ttf"), "~SPLDFF{arial.ttf}^"),
     "SPLGFN": (lambda c: c.get_field_names("temp1_53.rox"), "~SPLGFN{temp1_53.rox}^"),
     "SPLGFV": (lambda c: c.get_field_value("BatchNo"), "~SPLGFV{BatchNo}^"),
     "SPLAQD": (lambda c: c.append_queue_data("TextCSV", ["AB001", "AB002"]), "~SPLAQD{TextCSV~gt~AB001\nAB002}^"),
@@ -204,6 +218,10 @@ def test_catalog_contains_every_documented_command_code():
 
 def test_every_documented_command_has_an_explicit_frame_case():
     assert set(COMMAND_CASES) == DOCUMENTED_COMMAND_CODES
+
+
+def test_spgdtp_is_only_a_rev11_response_example_typo():
+    assert "SPGDTP" not in COMMANDS
 
 
 @pytest.mark.parametrize("code", sorted(DOCUMENTED_COMMAND_CODES))
