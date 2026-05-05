@@ -287,8 +287,8 @@ class SPPLCommands:
     def set_limited_print_count(self, print_quantity: int) -> SPPLCommand:
         return self.command("SPPSLQ", print_quantity)
 
-    def get_limited_print_count(self) -> SPPLCommand:
-        return self.command("SPPGLQ")
+    def get_limited_print_count(self, use_document_typo: bool = False) -> SPPLCommand:
+        return self.command("SPCGLQ" if use_document_typo else "SPPGLQ")
 
     def stop_print(self) -> SPPLCommand:
         return self.command("SPPSTP")

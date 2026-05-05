@@ -84,6 +84,7 @@ COMMAND_SPECS = (
     CommandSpec("SPPSAP", "print", "Start automatic print"),
     CommandSpec("SPPSLQ", "print", "Set limited print count", ("print_quantity",)),
     CommandSpec("SPPGLQ", "print", "Get limited print count"),
+    CommandSpec("SPCGLQ", "print", "Get limited print count alternate document example code", notes="Kept for the typo in the command table usage example."),
     CommandSpec("SPPSTP", "print", "Stop print"),
     CommandSpec("SPPOTP", "print", "One test print"),
     CommandSpec("SPPSTA", "print", "Printer status"),
