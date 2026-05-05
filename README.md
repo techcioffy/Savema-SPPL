@@ -36,6 +36,41 @@ with SavemaPrinterClient.tcp("192.168.1.123", port=9100, timeout=5) as printer:
     print(response.raw)
 ```
 
+## Real printer smoke test
+
+After installing the package, run a real-printer smoke test over TCP:
+
+```powershell
+sppl-smoke --host 192.168.1.123 --port 9100
+```
+
+Or through Python directly:
+
+```powershell
+python -m sppl.smoke --host 192.168.1.123
+```
+
+The default smoke plan is read-only: printer status, firmware, serial number,
+ribbon, counters, active template, and stored templates. To include additional
+read-only configuration reads:
+
+```powershell
+sppl-smoke --host 192.168.1.123 --include-configuration
+```
+
+Print-affecting probes are explicit:
+
+```powershell
+sppl-smoke --host 192.168.1.123 --unsafe-one-test-print
+```
+
+For RS-232, install the serial extra first:
+
+```powershell
+python -m pip install -e .[serial]
+sppl-smoke --serial-port COM3 --baudrate 115200
+```
+
 ## Template builder
 
 ```python
