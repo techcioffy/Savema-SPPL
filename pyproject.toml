@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "savema-sppl"
-version = "0.1.1"
+version = "0.1.2"
 description = "Python client and command builder for Savema Printer Programming Language (SPPL)."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -36,6 +36,9 @@ dev = [
 Homepage = "https://github.com/techcioffy/Savema-SPPL"
 Repository = "https://github.com/techcioffy/Savema-SPPL"
 Issues = "https://github.com/techcioffy/Savema-SPPL/issues"
+
+[project.scripts]
+sppl-smoke = "sppl.smoke:main"
 
 [tool.setuptools.packages.find]
 include = ["sppl*"]
